@@ -1,0 +1,34 @@
+﻿@inject IJSRuntime _jsRuntime;
+
+@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<div class="form-group">
+  <label>FilePath</label>
+  <input type="text" class="form-control" @bind="_filePath" />
+  <p>File '@_filePath' added</p>
+</div>
+
+@code{
+
+    private string _filePath = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _jsRuntime.InvokeVoidAsync("interopFunctions.registerIndexComponent",
+                DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public void SetFilePath(string filePath)
+    {
+        Console.WriteLine("Blazor SetFilePath executed");
+
+        _filePath = filePath;
+        StateHasChanged();
+    }
+}
